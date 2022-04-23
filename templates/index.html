@@ -1,0 +1,28 @@
+<html>
+    <title>Main Page</title>
+    <body>
+
+<form method="POST">
+    <label for="firstname">FirstName:</label><br>
+    <input type="text" id="firstname" name="firstname" value=""><br>
+    <label for="lastname">LastName:</label><br>
+    <input type="text" id="lastname" name="lastname" ><br>
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email" ><br>
+    <input type="submit" value="Register">
+  </form> 
+  <div><a href="/health"> Health Check Page </a></div>
+  <div>
+    <ul id="navigation">
+      {% if "error" not in result %}
+      <h1 style="background-color:MediumSeaGreen;">Success</h1>
+      {%  else %}
+      <h1 style="background-color:Tomato;">Failed</h1>
+      {% endif %}
+      {% for item in rows %}
+          <li>Id: {{ item.id }} FirstName: {{ item.firstname }} LastName: {{ item.lastname }} Email:{{ item.email}}</li>
+      {% endfor %}
+      </ul>
+  </div>
+    </body>
+</html>
