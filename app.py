@@ -3,19 +3,22 @@ from mysqldb import MYSQL
 import json
 import socket
 import os
+import requests
 #from watchtowerlogsmodule import logger
 
 location = os.path.dirname(os.path.realpath(__file__))
 
 APP_NAME= os.environ.get('APP_NAME','softglacier-example')
-LOG_GROUP_NAME = os.environ.get('LOG_GROUP_NAME','softglacier-group')
-LOG_STREAM_NAME= os.environ.get('LOG_STREAM_NAME','softglacier-stream')
-BOTO3_PROFILE_NAME = os.environ.get('BOTO3_PROFILE_NAME','default')
+#LOG_GROUP_NAME = os.environ.get('LOG_GROUP_NAME','softglacier-group')
+#LOG_STREAM_NAME= os.environ.get('LOG_STREAM_NAME','softglacier-stream')
+#BOTO3_PROFILE_NAME = os.environ.get('BOTO3_PROFILE_NAME','default')
 MYSQL_HOST= os.environ.get('MYSQL_HOST','127.0.0.1')
-MYSQL_PASSWORD =os.environ.get('MYSQL_PASSWORD','password')
+MYSQL_PASSWORD =os.environ.get('MYSQL_PASSWORD',None)
 MYSQL_USER =os.environ.get('MYSQL_USER','root')
 MYSQL_DATABASE= os.environ.get('MYSQL_DATABASE','persons')
 MYSQL_PORT =os.environ.get('MYSQL_PORT',3306)
+HOST_API  = os.environ.get('HOST_API','localhost')
+HOST_API_PORT =os.environ.get('HOST_API_PORT',8080)
 
 
 app = Flask(APP_NAME)
@@ -49,6 +52,8 @@ def index():
             email=request.form["email"].strip().replace(" ","").lower()
             insert_query = """INSERT INTO `users` (`firstname`, `lastname`,`email`) VALUES (%s, %s, %s)"""
             mysql.execute_command('persons',insert_query,(firstname,lastname,email))
+            data = {"firstname" : firstname,"lastname": lastname,"email":email}
+            requests.get(url=f"{HOST_API}:{HOST_API_PORT}/notify",params=data)
             select_query="""SELECT * FROM `users`"""
             rows = mysql.fetch('persons',select_query,())
             if len(rows) > 0:
