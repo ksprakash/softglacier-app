@@ -52,8 +52,9 @@ def index():
             email=request.form["email"].strip().replace(" ","").lower()
             insert_query = """INSERT INTO `users` (`firstname`, `lastname`,`email`) VALUES (%s, %s, %s)"""
             mysql.execute_command('persons',insert_query,(firstname,lastname,email))
-            data = {"firstname" : firstname,"lastname": lastname,"email":email}
-            requests.get(url=f"{HOST_API}:{HOST_API_PORT}/notify",params=data)
+            if "error" not in result:
+                data = {"firstname" : firstname,"lastname": lastname,"email":email}
+                requests.get(url=f"http://{HOST_API}:{HOST_API_PORT}/notify",params=data)
             select_query="""SELECT * FROM `users`"""
             rows = mysql.fetch('persons',select_query,())
             if len(rows) > 0:
