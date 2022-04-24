@@ -51,12 +51,12 @@ def index():
             lastname=request.form["lastname"].strip().replace(" ","").lower()
             email=request.form["email"].strip().replace(" ","").lower()
             insert_query = """INSERT INTO `users` (`firstname`, `lastname`,`email`) VALUES (%s, %s, %s)"""
-            mysql.execute_command('persons',insert_query,(firstname,lastname,email))
+            mysql.execute_command(MYSQL_DATABASE,insert_query,(firstname,lastname,email))
             if "error" not in result:
                 data = {"firstname" : firstname,"lastname": lastname,"email":email}
                 requests.get(url=f"http://{HOST_API}:{HOST_API_PORT}/notify",params=data)
             select_query="""SELECT * FROM `users`"""
-            rows = mysql.fetch('persons',select_query,())
+            rows = mysql.fetch(MYSQL_DATABASE,select_query,())
             if len(rows) > 0:
                 return render_template('index.html',rows=rows,result=result)
             return render_template('index.html',rows=rows,result=result)
